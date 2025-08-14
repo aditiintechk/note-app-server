@@ -60,20 +60,19 @@ app.put('/api/notes/:id', (req, res, next) => {
 		.catch((error) => next(error))
 })
 
-app.post('/api/notes', (req, res) => {
+app.post('/api/notes', (req, res, next) => {
 	const body = req.body
-	if (!body.content) {
-		return res.status(400).json({ error: 'content missing' })
-	}
 
 	const note = new Note({
 		content: body.content,
 		important: body.important || false,
 	})
 
-	note.save().then((result) => {
-		res.json(result)
-	})
+	note.save()
+		.then((result) => {
+			res.json(result)
+		})
+		.catch((error) => next(error))
 })
 
 const requestLogger = (req, res, next) => {
@@ -94,7 +93,9 @@ app.use(unknownEndpoint)
 const errorHandler = (error, req, res, next) => {
 	console.error(error.message)
 	if (error.name === 'CastError') {
-		return res.status(400).send({ error: 'malformatted if' })
+		return res.status(400).send({ error: 'malformatted id' })
+	} else if (error.name === 'ValidationError') {
+		return res.status(400).json({ error: error.message })
 	}
 
 	next(error)
