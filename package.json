@@ -7,6 +7,7 @@
 		"start": "cross-env NODE_ENV=production node index.js",
 		"dev": "cross-env NODE_ENV=development node --watch index.js",
 		"test": "cross-env NODE_ENV=test node --test ",
+		"only": "cross-env NODE_ENV=test npm test -- --test-only ",
 		"build:ui": "rm -rf dist && cd ../note-app-fsopen && npm run build && cp -r dist ../server",
 		"deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
 	},
