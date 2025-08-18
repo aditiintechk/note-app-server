@@ -1,13 +1,7 @@
 const mongoose = require('mongoose')
+require('dotenv').config()
 
-if (process.argv.length < 3) {
-	console.log('give password as argument')
-	process.exit(1)
-}
-
-const password = process.argv[2]
-
-const url = `mongodb+srv://fullstack:${password}@cluster0.kznyirb.mongodb.net/noteApp?retryWrites=true&w=majority&appName=Cluster0`
+const url = process.env.TEST_MONGO_URI
 
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
@@ -17,8 +11,6 @@ const noteSchema = new mongoose.Schema({
 	important: Boolean,
 })
 
-// recall: how is the collection named when schema is named singular?
-// recall: models are what kind of functions? what do they have access to?
 const Note = mongoose.model('Note', noteSchema)
 
 const note = new Note({
@@ -26,10 +18,18 @@ const note = new Note({
 	important: true,
 })
 
-/* note.save().then((result) => {
+const note1 = new Note({
+	content: 'learning supertest',
+	important: true,
+})
+
+note.save().then((result) => {
 	console.log('note saved!', result)
-	mongoose.connection.close()
-}) */
+})
+
+note1.save().then((result) => {
+	console.log('note saved!', result)
+})
 
 Note.find({}).then((result) => {
 	result.forEach((note) => {

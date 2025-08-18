@@ -4,9 +4,9 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "node index.js",
-		"dev": "node --watch index.js",
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "cross-env NODE_ENV=production node index.js",
+		"dev": "cross-env NODE_ENV=development node --watch index.js",
+		"test": "cross-env NODE_ENV=test node --test ",
 		"build:ui": "rm -rf dist && cd ../note-app-fsopen && npm run build && cp -r dist ../server",
 		"deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
 	},
@@ -15,8 +15,12 @@
 	"license": "ISC",
 	"dependencies": {
 		"cors": "^2.8.5",
+		"cross-env": "^10.0.0",
 		"dotenv": "^17.2.1",
 		"express": "^5.1.0",
 		"mongoose": "^8.17.1"
+	},
+	"devDependencies": {
+		"supertest": "^7.1.4"
 	}
 }
