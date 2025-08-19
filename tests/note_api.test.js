@@ -149,7 +149,7 @@ describe('when there is initially one user in db', () => {
 		assert(usernames.includes(newUser.username))
 	})
 
-	test.only('creation fails with proper statuscode and message if username already exists', async () => {
+	test('creation fails with proper statuscode and message if username already exists', async () => {
 		// get users from the db
 		const usersAtStart = await helper.usersInDb()
 
@@ -172,6 +172,26 @@ describe('when there is initially one user in db', () => {
 
 		const usersAtEnd = await helper.usersInDb()
 		assert.strictEqual(usersAtStart.length, usersAtEnd.length)
+	})
+})
+
+describe('retreiving information', () => {
+	beforeEach(async () => {
+		console.log('delete all')
+		await User.deleteMany({})
+		const passwordHash = await bcrypt.hash('sekret', 10)
+		const user = new User({ username: 'root', passwordHash })
+		console.log('save the root user')
+		await user.save()
+	})
+
+	test.only('all users from the database', async () => {
+		const response = await api
+			.get('/api/users')
+			.expect(200)
+			.expect('Content-Type', /application\/json/)
+
+		assert.deepStrictEqual(response.body.length, helper.initialUsers.length)
 	})
 })
 
