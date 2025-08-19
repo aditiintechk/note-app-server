@@ -4,7 +4,11 @@ const User = require('../models/user')
 const helper = require('../tests/test_helper.js')
 
 usersRouter.get('/', async (request, response) => {
-	const users = await User.find({})
+	// recall: what does populate do? how does mongoose join query? what is not guaranteed?
+	const users = await User.find({}).populate('notes', {
+		content: 1,
+		important: 1,
+	})
 	response.json(users)
 })
 

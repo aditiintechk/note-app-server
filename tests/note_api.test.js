@@ -8,6 +8,8 @@ const Note = require('../models/note')
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
+// todo: fix the tests for creating a note - user has been added.
+
 const api = supertest(app)
 
 describe('when there is initially some notes saved', () => {
