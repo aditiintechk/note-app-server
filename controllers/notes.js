@@ -28,6 +28,7 @@ notesRouter.get('/:id', async (request, response, next) => {
 // recall: adding a new note changes because users and notes tables should be populated with one another.
 notesRouter.post('/', async (request, response) => {
 	const body = request.body
+	// console.log('post request body', request)
 	const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
 	if (!decodedToken.id) {
 		return response.status(401).json({ error: 'token invalid' })

@@ -1,5 +1,5 @@
 const assert = require('node:assert')
-const { test, after, beforeEach, describe } = require('node:test')
+const { test, after, beforeEach, describe, before } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
@@ -8,7 +8,7 @@ const Note = require('../models/note')
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
-// todo: fix the tests for creating a note - user has been added.
+// implement: fix the tests for creating a note - user has been added.
 
 const api = supertest(app)
 
@@ -65,6 +65,15 @@ describe('when there is initially some notes saved', () => {
 	})
 
 	describe('addition of a new note', () => {
+		let token = ''
+		beforeEach(async () => {
+			const loginResponse = await api
+				.post('/api/login')
+				.send({ username: 'root', password: 'sekret' })
+
+			token = loginResponse.body.token
+		})
+
 		test('succeeds with valid data', async () => {
 			const newNote = {
 				content: 'async/await simplifies making async calls',
@@ -73,6 +82,7 @@ describe('when there is initially some notes saved', () => {
 
 			await api
 				.post('/api/notes')
+				.set('Authorization', `Bearer ${token}`)
 				.send(newNote)
 				.expect(201)
 				.expect('Content-Type', /application\/json/)
@@ -92,7 +102,11 @@ describe('when there is initially some notes saved', () => {
 		test('fails with status code 400 if data invalid', async () => {
 			const newNote = { important: true }
 
-			await api.post('/api/notes').send(newNote).expect(400)
+			await api
+				.post('/api/notes')
+				.set('Authorization', `Bearer ${token}`)
+				.send(newNote)
+				.expect(400)
 
 			const notesAtEnd = await helper.notesInDb()
 
@@ -187,7 +201,7 @@ describe('retreiving information', () => {
 		await user.save()
 	})
 
-	test.only('all users from the database', async () => {
+	test('all users from the database', async () => {
 		const response = await api
 			.get('/api/users')
 			.expect(200)
